@@ -1,21 +1,31 @@
 ﻿using System;
+using System.Globalization;
+using System.Linq;
 
 namespace KG08
 {
     public class SampleData
     {
-        //public List<Sale> Sales => 
+        /*OrderDate Region Rep Item Units UnitCost Total*/
         public void Parse()
         {
-            var v = RawString.Split("\n");
+
+            var v = RawString
+                .Split("\n")
+                .Select(v => v.Trim())
+                .Where(v => v.Length != 0)
+                .Chunk(7)
+                .Select(v => new Sale { OrderDate = v[0], Region = v[1], Representative = v[2], Item = v[3], Units = int.Parse(v[4]), UnitCost = decimal.Parse(v[5], new CultureInfo("en-US")), Total = decimal.Parse(v[6], new CultureInfo("en-US")) }
+                   
+        ) ;
             foreach(var s in v)
             {
-                Console.WriteLine(s);
+                Console.WriteLine($"[{s.OrderDate}]");
             }
         }
         public class Sale
         {
-            public DateTime OrderDate { get; set; }
+            public string OrderDate { get; set; }
             public string Region { get; set; }
             public string Representative { get; set; }
             public string Item { get; set; }
